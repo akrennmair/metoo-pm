@@ -23,18 +23,19 @@ sub content_type($) { $content_type = shift; }
 sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
 
-sub get(@) {
-	my (%args) = @_;
+sub register_route($@) {
+	my ($method, %args) = @_;
 	foreach my $rx (keys %args) {
-		$routes{GET}->{"^" . base . $rx . '$'} = $args{$rx};
+		$routes{$method}->{'^' . base . $rx . '$'} = $args{$rx};
 	}
 }
 
+sub get(@) {
+	register_route('GET', @_);
+}
+
 sub post(@) {
-	my (%args) = @_;
-	foreach my $rx (keys %args) {
-		$routes{POST}->{"^" . base . $rx . '$'} = $args{$rx};
-	}
+	register_route('POST', @_);
 }
 
 sub get_post(@) {
