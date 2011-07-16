@@ -9,8 +9,8 @@ What is metoo.pm?
 =================
 
 It's a nano web application framework, for two reasons:
-1) it's supposed to be super-tiny. It's supposed to be super-tiny, below 2 kB 
-   and 100 SLOCs. This will probably change, but not too much.
+1) it's supposed to be super-tiny, below 2kB and 100 SLOCs. This will probably change, 
+   but not too much.
 2) it depends on nothing but Perl core modules.
 
 It's NOT supposed to be a full-featured, high-performance web application 
