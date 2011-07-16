@@ -41,7 +41,7 @@ Then define your route handlers, in a style similar to Dancer:
 
 	get "/get/(.*)" => sub {
 		# match is in $_[0]
-	}
+	};
 
 And finally, make your application available under a nice URL:
 
