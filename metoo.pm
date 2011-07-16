@@ -2,7 +2,7 @@ package metoo;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url);
+@EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t);
 
 use CGI;
 use strict;
@@ -13,7 +13,7 @@ my ($q, $text_404, $content_type);
 
 BEGIN {
 	$q = new CGI;
-	$text_404 = "<html><head><title>404 - Not Found</title><head><body><h1>404 - Not Found</h1></body></html>";
+	$text_404 = "<html><head><title>404 - Not Found</title><head><body><h1>404 - Not Found</h1><p>The requested URL {url} was not found.<p></body></html>";
 }
 
 sub cgi { return $q; }
@@ -47,6 +47,14 @@ sub redirect($;$) {
 	print $q->redirect(-uri => $url, -status => $code || 301);
 }
 
+sub t($@) {
+	my ($data, %vars) = @_;
+	foreach my $key (%vars) {
+		$data =~ s/{$key}/$vars{$key}/g;
+	}
+	return $data;
+}
+
 END {
 	if ($q->path_info eq "") {
 		redirect(base_url . "/", 301);
@@ -64,7 +72,7 @@ END {
 			return;
 		}
 	}
-	print "Status: 404 Not Found\r\nContent-type: text/html\r\n\r\n$text_404";
+	print "Status: 404 Not Found\r\nContent-type: text/html\r\n\r\n" . t($text_404, url => $ENV{SCRIPT_URL});
 }
 
 1;
