@@ -15,6 +15,7 @@ BEGIN {
 	$q = new CGI;
 	$base = substr($ENV{SCRIPT_URL}, 0, length($ENV{SCRIPT_URL}) - length($ENV{PATH_INFO}));
 	$base_url = substr($ENV{SCRIPT_URI}, 0, length($ENV{SCRIPT_URI}) - length($ENV{PATH_INFO}));
+	$text_404 = "<html><head><title>404 - Not Found</title><head><body><h1>404 - Not Found</h1></body></html>";
 }
 
 sub cgi { return $q; }
