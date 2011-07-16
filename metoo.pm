@@ -9,12 +9,10 @@ use strict;
 use warnings;
 
 my %routes;
-my ($q, $base, $base_url, $text_404, $content_type);
+my ($q, $text_404, $content_type);
 
 BEGIN {
 	$q = new CGI;
-	$base = substr($ENV{SCRIPT_URL}, 0, length($ENV{SCRIPT_URL}) - length($ENV{PATH_INFO}));
-	$base_url = substr($ENV{SCRIPT_URI}, 0, length($ENV{SCRIPT_URI}) - length($ENV{PATH_INFO}));
 	$text_404 = "<html><head><title>404 - Not Found</title><head><body><h1>404 - Not Found</h1></body></html>";
 }
 
@@ -22,20 +20,20 @@ sub cgi { return $q; }
 sub params { return $q->Vars; }
 sub set_404($) { $text_404 = shift; }
 sub content_type($) { $content_type = shift; }
-sub base { return $base; }
-sub base_url { return $base_url; }
+sub base { return $q->url(-absolute=>1); }
+sub base_url { return $q->url; }
 
 sub get(@) {
 	my (%args) = @_;
 	foreach my $rx (keys %args) {
-		$routes{GET}->{"^$base" . $rx . '$'} = $args{$rx};
+		$routes{GET}->{"^" . base . $rx . '$'} = $args{$rx};
 	}
 }
 
 sub post(@) {
 	my (%args) = @_;
 	foreach my $rx (keys %args) {
-		$routes{POST}->{"^$base" . $rx . '$'} = $args{$rx};
+		$routes{POST}->{"^" . base . $rx . '$'} = $args{$rx};
 	}
 }
 
@@ -50,7 +48,7 @@ sub redirect($;$) {
 
 END {
 	if ($q->path_info eq "") {
-		redirect($ENV{SCRIPT_URI} . "/", 301);
+		redirect(base_url . "/", 301);
 		return;
 	}
 	my $r = $routes{$q->request_method};
