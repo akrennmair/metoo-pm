@@ -57,20 +57,14 @@ END {
 		print $q->header, "Error: unhandled request method.";
 		return;
 	}
-	my $func;
-	my @args;
 	foreach my $rx (keys %$r) {
-		if (@args = ($ENV{SCRIPT_URL} =~ /$rx/)) {
-			$func = $r->{$rx};
-			last;
+		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/)) {
+			my $output = &{$r->{$rx}}(@args);
+			print $q->header(-content_type => $content_type), $output;
+			return;
 		}
 	}
-	if (!$func) {
-		print "Status: 404 Not Found\r\nContent-type: text/html\r\n\r\n$text_404";
-		return;
-	}
-	my $output = &$func(@args);
-	print $q->header(-content_type => $content_type), $output;
+	print "Status: 404 Not Found\r\nContent-type: text/html\r\n\r\n$text_404";
 }
 
 1;
