@@ -1,0 +1,67 @@
+README for metoo.pm
+===================
+
+metoo.pm is a nano web application framework for Perl. Since everybody has 
+written his own web application framework, I can do so, too.
+
+
+What is metoo.pm?
+=================
+
+It's a nano web application framework, for two reasons:
+1) it's supposed to be super-tiny. It's supposed to be super-tiny, below 2 kB 
+   and 100 SLOCs. This will probably change, but not too much.
+2) it depends on nothing but Perl core modules.
+
+It's NOT supposed to be a full-featured, high-performance web application 
+framework.
+
+The principal idea is to quickly hack small CGI scripts in a style similar to 
+Dancer, copy it to your cgi-bin directory, add one RewriteRule to your 
+webserver configuration, and have a web application with simple request routing 
+and shiny URLs.
+
+
+Usage
+=====
+
+First of all,
+
+	use metoo;
+
+Then define your route handlers, in a style similar to Dancer:
+
+	get "/" => sub {
+		# ...
+	};
+
+	post "/foo" => sub {
+		# ...
+	};
+
+	get "/get/(.*)" => sub {
+		# match is in $_[0]
+	}
+
+And finally, make your application available under a nice URL:
+
+	RewriteRule ^/foo(.*)$ /cgi-bin/yourscript.cgi$1 [QSA,PT,L]
+
+Every request to /foo... will now be forwarded to passed to your application 
+and handled by the route handlers. The routes are relative to the prefix that 
+you defined in the RewriteRule.
+
+For a more complete example, see sample.cgi, and for documentation, metoo.pm 
+itself, until I add proper documentation.
+
+
+Author
+======
+
+Andreas Krennmair <ak@synflood.at>
+
+
+License
+=======
+
+See the LICENSE file for further license information.
