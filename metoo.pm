@@ -42,7 +42,7 @@ sub get_post(@) {
 	get @_; post @_;
 }
 
-sub redirect {
+sub redirect($$) {
 	my ($url, $code) = @_;
 	$code ||= 301;
 	print $q->redirect(-uri => $url, -status => $code);
