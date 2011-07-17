@@ -1,4 +1,4 @@
-use Test::Perl::Critic (-severity => 3, -exclude => ['ProhibitAutomaticExportation']);
+use Test::Perl::Critic (-severity => 3, -exclude => ['ProhibitAutomaticExportation', 'RequireFinalReturn']);
 use Test::More tests => 1;
 use strict;
 use warnings;

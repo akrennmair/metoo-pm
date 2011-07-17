@@ -19,8 +19,8 @@ BEGIN {
 
 sub cgi { return $q; }
 sub params { return $q->Vars; }
-sub set_404 { $text_404 = shift; return; }
-sub content_type { $content_type = shift; return; }
+sub set_404 { $text_404 = shift; }
+sub content_type { $content_type = shift; }
 sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
 
@@ -29,31 +29,26 @@ sub register_route {
 	foreach my $rx (keys %args) {
 		$routes{$method}->{'^' . base . $rx . '$'} = $args{$rx};
 	}
-	return;
 }
 
 sub get {
 	my @args = @_;
 	register_route('GET', @args);
-	return;
 }
 
 sub post {
 	my @args = @_;
 	register_route('POST', @args);
-	return;
 }
 
 sub get_post {
 	my @args = @_;
 	get @args; post @args;
-	return;
 }
 
 sub redirect {
 	my ($url, $code) = @_;
 	print $q->redirect(-uri => $url, -status => $code || 301);
-	return;
 }
 
 sub t {
