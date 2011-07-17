@@ -1,0 +1,195 @@
+=head1 NAME
+
+metoo - nano web application framework
+
+=head1 SYNOPSIS
+
+    use metoo;
+
+    get "/foo" => sub {
+        # ...
+    };
+
+    post "/bar" => sub {
+        # ...
+    };
+
+=head1 DESCRIPTION
+
+metoo is a minimalistic ("nano") web application framework. This means that it 
+is both tiny in size and depends only on core Perl modules. The goal is to 
+provide a small framework that allows users to quickly hack together a small 
+CGI script in a style similar to the Dancer web framework, put it in their 
+cgi-bin directory, add one RewriteRule to their webserver configuration, and 
+have web application with simple request routing and shiny URLs without having 
+to resort to a full-blown web framework with a gazillion of dependencies.
+
+=head1 DEFINING ROUTE HANDLERS
+
+The general structure of metoo-based web application is simple: all you need to 
+do is to C<use> the right and module and to define your route handlers.
+
+A route handler describes the URL you want to handle, the HTTP method (GET, 
+POST) for which you want it to be active, and the Perl code that shall be 
+executed when that particular URL is hit. The Perl code (a C<sub>) returns the
+body that shall be used as a response. The most simple is example is the
+following:
+
+    use metoo;
+
+    get "/hello" => sub {
+        "<h1>Hello, world!</h1>";
+    };
+
+So, when you go to /hello, the text "Hello, world!" is displayed. So make these 
+routes more flexible, you can use regular expressions to match parts of the 
+URL. These matches are then available in C<@_> of the C<sub>:
+
+    get "/display/(.*)" => sub {
+        my $id = shift;
+        my $data = lookup_by_id($id);
+        "data: $data";
+    };
+
+To access GET or POST parameters, use the function C<param()> that returns a 
+C<HASHREF> of these parameters.
+
+    post "/save/(.*)" => sub {
+        my $id = shift;
+        my $data = params->{data};
+        save_data($id, $data);
+        redirect base_url . "/overview";
+   }
+
+In this example, you cannot only see how you use regular expressions for route 
+handlers and how to access POST parameters, but also how you can redirect to 
+other pages.
+
+Other helper functions are C<base> and C<base_url>. While the former returns 
+the prefix under which your application is deployed (see below for more 
+information on deployment), the latter returns the URL prefix including URL 
+scheme, hostname, and optionally port.
+
+=head1 DEPLOYING METOO APPLICATIONS
+
+metoo-based application are supposed to be deployed as CGI scripts. This means 
+that you can simply copy them to your cgi-bin directory, and access them from 
+there. The resulting URLs are of course ugly, so the recommended way of 
+deployment also consists of adding a RewriteRule to your webserver 
+configuration:
+
+    RewriteRule ^/foo(.*)$ /cgi-bin/yourscript.cgi$1 [QSA,PT,L]
+
+This rewrite rule passes all requests to /foo... to your CGI script while 
+preserving the path information (that's what is being matched with the group in 
+the regular expression), including the query string.
+
+=head1 FUNCTIONS
+
+The following list documents all helper functions that are provided by the 
+framework.
+
+=head2 base
+
+Returns the prefix of the application. For example, if you deployed your application
+to /foo, C<base> will return /foo. This is e.g. useful for linking to other parts
+of your application.
+
+=head2 base_url
+
+Similar to C<base>, but returns the complete URL prefix. If you deployed your application
+to /foo, C<base_url> will return e.g. http://example.com/foo. This is e.g. useful
+for redirects, as proper redirects need to specify complete URLs.
+
+=head2 cgi
+
+Returns the underlying CGI object. This is useful if you want to integrate with 
+other modules that build upon the CGI module, such as C<CGI::Session>.
+
+=head2 content_type
+
+    content_type "text/plain";
+
+Can be used to set the content-type of the response. The default is "text/html".
+
+=head2 get
+
+Registers a route handler to be active for HTTP GET requests.
+
+=head2 get_post
+
+Registers a route handler to be active for both HTTP GET and POST requests.
+
+=head2 params
+
+Returns a C<HASHREF> to the HTTP GET or POST parameters.
+
+=head2 post
+
+Registers a route handler to be active for HTTP POST requests.
+
+=head2 redirect
+
+Sends an HTTP redirect to a specific URL, optionally with a custom 3xx code. 
+The default code is 301.
+
+    redirect base_url . "/foo";
+    redirect "http://www.google.com/", 303;
+
+=head2 set_404
+
+When no route handler could be found, a 404 page is displayed. With C<set_404>, 
+you can specify a custom page. If you want to include the relative URL that was 
+requested in the custom page, include the string "{url}". It will then be 
+replaced.
+
+=head2 t
+
+    my $data = t("{greeting}, {name}!", greeting => "Hello", name => "world");
+
+This function provides a minimalistic template system, shamelessly ripped off 
+from Tweet-Templ 
+(L<http://mir.aculo.us/2011/03/09/little-helpers-a-tweet-sized-javascript-templating-engine/>), 
+a tiny template system for JavaScript in less than 140 characters. The first 
+argument is the template string, then follows a list of key-value pairs. Each 
+key, enclosed in braces ({ and }), is then replaced with the accompanying 
+value. This is not exactly flexible and feature-complete, but it is good enough 
+for simple templates, and definitely fits metoo's characteristics of being a 
+tiny application framework.
+
+=head1 BUGS
+
+Please report bugs relevant to C<metoo> to E<lt>ak@synflood.atE<gt>.
+
+=head1 SEE ALSO
+
+If you want to create bigger and more advanced web applications, use the 
+fine L<Dancer> framework.
+
+=head1 AUTHOR
+
+Andreas Krennmair E<lt>ak@synflood.atE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2011 Andreas Krennmair
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+=cut
