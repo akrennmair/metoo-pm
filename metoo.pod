@@ -1,6 +1,6 @@
 =head1 NAME
 
-metoo - nano web application framework
+metoo.pm - nano web application framework
 
 =head1 SYNOPSIS
 
@@ -16,8 +16,8 @@ metoo - nano web application framework
 
 =head1 DESCRIPTION
 
-metoo is a minimalistic ("nano") web application framework. This means that it 
-is both tiny in size and depends only on core Perl modules. The goal is to 
+metoo.pm is a minimalistic ("nano") web application framework. This means that 
+it is both tiny in size and depends only on core Perl modules. The goal is to 
 provide a small framework that allows users to quickly hack together a small 
 CGI script in a style similar to the Dancer web framework, put it in their 
 cgi-bin directory, add one RewriteRule to their webserver configuration, and 
@@ -26,7 +26,7 @@ to resort to a full-blown web framework with a gazillion of dependencies.
 
 =head1 DEFINING ROUTE HANDLERS
 
-The general structure of metoo-based web application is simple: all you need to 
+The general structure of metoo.pm-based web application is simple: all you need to 
 do is to C<use> the right and module and to define your route handlers.
 
 A route handler describes the URL you want to handle, the HTTP method (GET, 
@@ -70,11 +70,11 @@ the prefix under which your application is deployed (see below for more
 information on deployment), the latter returns the URL prefix including URL 
 scheme, hostname, and optionally port.
 
-=head1 DEPLOYING METOO APPLICATIONS
+=head1 DEPLOYING METOO.PM APPLICATIONS
 
-metoo-based application are supposed to be deployed as CGI scripts. This means 
-that you can simply copy them to your cgi-bin directory, and access them from 
-there. The resulting URLs are of course ugly, so the recommended way of 
+metoo.pm-based application are supposed to be deployed as CGI scripts. This 
+means that you can simply copy them to your cgi-bin directory, and access them 
+from there. The resulting URLs are of course ugly, so the recommended way of 
 deployment also consists of adding a RewriteRule to your webserver 
 configuration:
 
@@ -154,12 +154,12 @@ a tiny template system for JavaScript in less than 140 characters. The first
 argument is the template string, then follows a list of key-value pairs. Each 
 key, enclosed in braces ({ and }), is then replaced with the accompanying 
 value. This is not exactly flexible and feature-complete, but it is good enough 
-for simple templates, and definitely fits metoo's characteristics of being a 
+for simple templates, and definitely fits metoo.pm's characteristics of being a 
 tiny application framework.
 
 =head1 BUGS
 
-Please report bugs relevant to C<metoo> to E<lt>ak@synflood.atE<gt>.
+Please report bugs relevant to metoo.pm to E<lt>ak@synflood.atE<gt>.
 
 =head1 SEE ALSO
 
