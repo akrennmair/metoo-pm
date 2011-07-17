@@ -1,11 +1,11 @@
-README for metoo.pm
+README for MeToo.pm
 ===================
 
-metoo.pm is a nano web application framework for Perl. Since everybody has 
+MeToo.pm is a nano web application framework for Perl. Since everybody has 
 written an own web application framework, I can do so, too.
 
 
-What is metoo.pm?
+What is MeToo.pm?
 =================
 
 It's a nano web application framework, for two reasons:
@@ -27,7 +27,7 @@ Usage
 
 First of all,
 
-	use metoo;
+	use MeToo;
 
 Then define your route handlers, in a style similar to Dancer:
 
@@ -52,7 +52,7 @@ and handled by the route handlers. The routes are relative to the prefix that
 you defined in the RewriteRule.
 
 For a more complete example, see sample.cgi, and for documentation, see 
-metoo.pod, which contains documentation in POD format.
+MeToo.pod, which contains documentation in POD format.
 
 
 Author

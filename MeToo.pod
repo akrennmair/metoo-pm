@@ -1,10 +1,10 @@
 =head1 NAME
 
-metoo.pm - nano web application framework
+MeToo.pm - nano web application framework
 
 =head1 SYNOPSIS
 
-    use metoo;
+    use MeToo;
 
     get "/foo" => sub {
         # ...
@@ -16,7 +16,7 @@ metoo.pm - nano web application framework
 
 =head1 DESCRIPTION
 
-metoo.pm is a minimalistic ("nano") web application framework. This means that 
+MeToo.pm is a minimalistic ("nano") web application framework. This means that 
 it is both tiny in size and depends only on core Perl modules. The goal is to 
 provide a small framework that allows users to quickly hack together a small 
 CGI script in a style similar to the Dancer web framework, put it in their 
@@ -26,7 +26,7 @@ to resort to a full-blown web framework with a gazillion of dependencies.
 
 =head1 DEFINING ROUTE HANDLERS
 
-The general structure of metoo.pm-based web application is simple: all you need to 
+The general structure of MeToo.pm-based web application is simple: all you need to 
 do is to C<use> the right and module and to define your route handlers.
 
 A route handler describes the URL you want to handle, the HTTP method (GET, 
@@ -35,7 +35,7 @@ executed when that particular URL is hit. The Perl code (a C<sub>) returns the
 body that shall be used as a response. The most simple is example is the
 following:
 
-    use metoo;
+    use MeToo;
 
     get "/hello" => sub {
         "<h1>Hello, world!</h1>";
@@ -72,7 +72,7 @@ scheme, hostname, and optionally port.
 
 =head1 DEPLOYING METOO.PM APPLICATIONS
 
-metoo.pm-based application are supposed to be deployed as CGI scripts. This 
+MeToo.pm-based application are supposed to be deployed as CGI scripts. This 
 means that you can simply copy them to your cgi-bin directory, and access them 
 from there. The resulting URLs are of course ugly, so the recommended way of 
 deployment also consists of adding a RewriteRule to your webserver 
@@ -154,12 +154,12 @@ a tiny template system for JavaScript in less than 140 characters. The first
 argument is the template string, then follows a list of key-value pairs. Each 
 key, enclosed in braces ({ and }), is then replaced with the accompanying 
 value. This is not exactly flexible and feature-complete, but it is good enough 
-for simple templates, and definitely fits metoo.pm's characteristics of being a 
+for simple templates, and definitely fits MeToo.pm's characteristics of being a 
 tiny application framework.
 
 =head1 BUGS
 
-Please report bugs relevant to metoo.pm to E<lt>ak@synflood.atE<gt>.
+Please report bugs relevant to MeToo.pm to E<lt>ak@synflood.atE<gt>.
 
 =head1 SEE ALSO
 
