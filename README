@@ -1,11 +1,11 @@
-README for metoo
-================
+README for metoo.pm
+===================
 
-metoo is a nano web application framework for Perl. Since everybody has 
+metoo.pm is a nano web application framework for Perl. Since everybody has 
 written an own web application framework, I can do so, too.
 
 
-What is metoo?
+What is metoo.pm?
 =================
 
 It's a nano web application framework, for two reasons:
