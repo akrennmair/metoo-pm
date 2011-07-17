@@ -1,5 +1,4 @@
 use CGI::Test;
-use Data::Dumper;
 require CGI::Test::Input::URL;
 
 print "1..10\n";
