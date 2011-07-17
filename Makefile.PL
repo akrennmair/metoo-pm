@@ -9,5 +9,10 @@ WriteMakefile (
 	PREREQ_PM	=> {
 			'CGI' => '3.43',
 			'Exporter' => '5.63',
-	}
+	},
+	BUILD_REQUIRES	=> {
+			'CGI::Test' => '0.104',
+			'Test::Perl::Critic' => '1.02',
+			'Test::More' => '0.92',
+	},
 );
