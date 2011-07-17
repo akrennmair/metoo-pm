@@ -1,56 +1,65 @@
-package metoo;
+package MeToo;
 
-require Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t);
-
-use CGI;
 use strict;
 use warnings;
+
+require Exporter;
+use base qw(Exporter);
+our @EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t);
+
+use CGI;
 
 my %routes;
 my ($q, $text_404, $content_type);
 
 BEGIN {
-	$q = new CGI;
+	$q = CGI->new;
 	$text_404 = "<html><head><title>404 - Not Found</title><head><body><h1>404 - Not Found</h1><p>The requested URL {url} was not found.<p></body></html>";
 }
 
 sub cgi { return $q; }
 sub params { return $q->Vars; }
-sub set_404($) { $text_404 = shift; }
-sub content_type($) { $content_type = shift; }
+sub set_404 { $text_404 = shift; return; }
+sub content_type { $content_type = shift; return; }
 sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
 
-sub register_route($@) {
+sub register_route {
 	my ($method, %args) = @_;
 	foreach my $rx (keys %args) {
 		$routes{$method}->{'^' . base . $rx . '$'} = $args{$rx};
 	}
+	return;
 }
 
-sub get(@) {
-	register_route('GET', @_);
+sub get {
+	my @args = @_;
+	register_route('GET', @args);
+	return;
 }
 
-sub post(@) {
-	register_route('POST', @_);
+sub post {
+	my @args = @_;
+	register_route('POST', @args);
+	return;
 }
 
-sub get_post(@) {
-	get @_; post @_;
+sub get_post {
+	my @args = @_;
+	get @args; post @args;
+	return;
 }
 
-sub redirect($;$) {
+sub redirect {
 	my ($url, $code) = @_;
 	print $q->redirect(-uri => $url, -status => $code || 301);
+	return;
 }
 
-sub t($@) {
+sub t {
 	my ($data, %vars) = @_;
 	foreach my $key (%vars) {
-		$data =~ s/{$key}/$vars{$key}/g;
+		$data =~ s/{$key}/$vars{$key}/gx;
 	}
 	return $data;
 }
@@ -66,13 +75,13 @@ END {
 		return;
 	}
 	foreach my $rx (keys %$r) {
-		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/)) {
+		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
 			my $output = &{$r->{$rx}}(@args);
 			print $q->header(-content_type => $content_type), $output;
 			return;
 		}
 	}
-	print "Status: 404 Not Found\r\nContent-type: text/html\r\n\r\n" . t($text_404, url => $ENV{SCRIPT_URL});
+	print "Status: 404\r\nContent-type: text/html\r\n\r\n" . t($text_404, url => $ENV{SCRIPT_URL});
 }
 
 1;
