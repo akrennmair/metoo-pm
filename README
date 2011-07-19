@@ -47,9 +47,9 @@ And finally, make your application available under a nice URL:
 
 	RewriteRule ^/foo(.*)$ /cgi-bin/yourscript.cgi$1 [QSA,PT,L]
 
-Every request to /foo... will now be forwarded to passed to your application 
-and handled by the route handlers. The routes are relative to the prefix that 
-you defined in the RewriteRule.
+Every request to /foo... will now be passed to your application and handled by 
+the route handlers. The routes are relative to the prefix that you defined in 
+the RewriteRule.
 
 For a more complete example, see sample.cgi, and for documentation, see 
 MeToo.pod, which contains documentation in POD format.
