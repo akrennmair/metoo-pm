@@ -27,7 +27,9 @@ sub base_url { return $q->url; }
 sub register_route {
 	my ($method, %args) = @_;
 	foreach my $rx (keys %args) {
-		$routes{$method}->{'^' . base . $rx . '$'} = $args{$rx};
+		my $base = base;
+		push(@{$routes{$method}->{rx}}, '^' . $base . $rx . '$');
+		push(@{$routes{$method}->{sub}}, $args{$rx});
 	}
 }
 
@@ -54,7 +56,7 @@ sub redirect {
 sub t {
 	my ($data, %vars) = @_;
 	foreach my $key (%vars) {
-		$data =~ s/{$key}/$vars{$key}/gx;
+		$data =~ s/\{$key\}/$vars{$key}/gx;
 	}
 	return $data;
 }
@@ -69,10 +71,11 @@ END {
 		print $q->header, "Error: unhandled request method.";
 		return;
 	}
-	foreach my $rx (keys %$r) {
+	foreach my $rx (@{$r->{rx}}) {
+		my $routine = shift(@{$r->{sub}});
 		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
-			my $output = &{$r->{$rx}}(@args);
-			print $q->header(-content_type => $content_type), $output;
+			my $output = &{$routine}(@args);
+			print $q->header(-content_type => $content_type, -charset=>'utf-8'), $output;
 			return;
 		}
 	}
