@@ -21,13 +21,13 @@ it is both tiny in size and depends only on core Perl modules. The goal is to
 provide a small framework that allows users to quickly hack together a small 
 CGI script in a style similar to the Dancer web framework, put it in their 
 cgi-bin directory, add one RewriteRule to their webserver configuration, and 
-have web application with simple request routing and shiny URLs without having 
+have a web application with simple request routing and shiny URLs without having 
 to resort to a full-blown web framework with a gazillion of dependencies.
 
 =head1 DEFINING ROUTE HANDLERS
 
 The general structure of MeToo.pm-based web application is simple: all you need to 
-do is to C<use> the right and module and to define your route handlers.
+do is to C<use> the right module and to define your route handlers.
 
 A route handler describes the URL you want to handle, the HTTP method (GET, 
 POST) for which you want it to be active, and the Perl code that shall be 
