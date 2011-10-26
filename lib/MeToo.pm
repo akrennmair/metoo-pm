@@ -5,12 +5,13 @@ use warnings;
 
 require Exporter;
 use base qw(Exporter);
-our @EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t);
+our @EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t redirect_internal set_sid get_sid);
 
 use CGI;
 
 my %routes;
-my ($q, $text_404, $content_type);
+my ($q, $text_404, $content_type, $session_id);
+use constant SESSID_NAME => "MTSESSID";
 
 BEGIN {
 	$q = CGI->new;
@@ -23,6 +24,8 @@ sub set_404 { $text_404 = shift; }
 sub content_type { $content_type = shift; }
 sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
+sub set_sid { $session_id = shift; }
+sub get_sid { return $q->cookie(SESSID_NAME); }
 
 sub register_route {
 	my ($method, %args) = @_;
@@ -53,6 +56,12 @@ sub redirect {
 	print $q->redirect(-uri => $url, -status => $code || 301);
 }
 
+sub redirect_internal {
+	my ($url, $code) = @_;
+	$url = base_url . $url;
+	print $q->redirect(-uri => $url, -status => $code || 301);
+}
+
 sub t {
 	my ($data, %vars) = @_;
 	foreach my $key (%vars) {
@@ -74,8 +83,10 @@ END {
 	foreach my $rx (@{$r->{rx}}) {
 		my $routine = shift(@{$r->{sub}});
 		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
-			my $output = &{$routine}(@args);
-			print $q->header(-content_type => $content_type, -charset=>'utf-8'), $output;
+			my $output = &{$routine}(@args) || "";
+			my $cookie;
+			$cookie = SESSID_NAME . "=" . $session_id if $session_id;
+			print $q->header(-content_type => $content_type, -charset=>'utf-8', -cookie => $cookie), $output;
 			return;
 		}
 	}
