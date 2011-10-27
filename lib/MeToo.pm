@@ -5,12 +5,12 @@ use warnings;
 
 require Exporter;
 use base qw(Exporter);
-our @EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t redirect_internal set_sid get_sid);
+our @EXPORT = qw(cgi get post get_post params redirect set_404 content_type base base_url t redirect_internal set_sid get_sid before after);
 
 use CGI;
 
 my %routes;
-my ($q, $text_404, $content_type, $session_id);
+my ($q, $text_404, $content_type, $session_id, $before_cb, $after_cb);
 use constant SESSID_NAME => "MTSESSID";
 
 BEGIN {
@@ -27,6 +27,8 @@ sub base_url { return $q->url; }
 sub set_sid { $session_id = shift; }
 sub get_sid { return $q->cookie(SESSID_NAME); }
 sub _get_cookie { my $cookie; $cookie = SESSID_NAME . "=" . $session_id if $session_id; return $cookie; }
+sub before { $before_cb = shift; }
+sub after { $after_cb = shift; }
 
 sub register_route {
 	my ($method, %args) = @_;
@@ -84,7 +86,9 @@ END {
 	foreach my $rx (@{$r->{rx}}) {
 		my $routine = shift(@{$r->{sub}});
 		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
+			&{$before_cb}() if $before_cb;
 			my $output = &{$routine}(@args) || "";
+			&{$after_cb}() if $after_cb;
 			print $q->header(-content_type => $content_type, -charset=>'utf-8', -cookie => _get_cookie), $output;
 			return;
 		}
