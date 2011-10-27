@@ -26,6 +26,7 @@ sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
 sub set_sid { $session_id = shift; }
 sub get_sid { return $q->cookie(SESSID_NAME); }
+sub _get_cookie { my $cookie; $cookie = SESSID_NAME . "=" . $session_id if $session_id; return $cookie; }
 
 sub register_route {
 	my ($method, %args) = @_;
@@ -53,13 +54,13 @@ sub get_post {
 
 sub redirect {
 	my ($url, $code) = @_;
-	print $q->redirect(-uri => $url, -status => $code || 301);
+	print $q->redirect(-uri => $url, -status => $code || 301, -cookie => _get_cookie);
 }
 
 sub redirect_internal {
 	my ($url, $code) = @_;
 	$url = base_url . $url;
-	print $q->redirect(-uri => $url, -status => $code || 301);
+	print $q->redirect(-uri => $url, -status => $code || 301, -cookie => _get_cookie);
 }
 
 sub t {
@@ -84,9 +85,7 @@ END {
 		my $routine = shift(@{$r->{sub}});
 		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
 			my $output = &{$routine}(@args) || "";
-			my $cookie;
-			$cookie = SESSID_NAME . "=" . $session_id if $session_id;
-			print $q->header(-content_type => $content_type, -charset=>'utf-8', -cookie => $cookie), $output;
+			print $q->header(-content_type => $content_type, -charset=>'utf-8', -cookie => _get_cookie), $output;
 			return;
 		}
 	}
