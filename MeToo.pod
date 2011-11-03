@@ -89,6 +89,15 @@ the regular expression), including the query string.
 The following list documents all helper functions that are provided by the 
 framework.
 
+=head2 after
+
+Registers an after handler that will be called after every request.
+
+    after sub {
+      $dbh->disconnect;
+      undef($dbh);
+    };
+
 =head2 base
 
 Returns the prefix of the application. For example, if you deployed your application
@@ -100,6 +109,14 @@ of your application.
 Similar to C<base>, but returns the complete URL prefix. If you deployed your application
 to /foo, C<base_url> will return e.g. http://example.com/foo. This is e.g. useful
 for redirects, as proper redirects need to specify complete URLs.
+
+=head2 before
+
+Registers a before handler that will be called prior to every request.
+
+    before sub {
+      $dbh = connect_db;
+    };
 
 =head2 cgi
 
