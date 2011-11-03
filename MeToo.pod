@@ -120,6 +120,13 @@ Registers a route handler to be active for HTTP GET requests.
 
 Registers a route handler to be active for both HTTP GET and POST requests.
 
+=head2 get_sid
+
+Returns the currently set Session ID. The Session ID is transmitted as a cookie
+named C<MTSESSID>.
+
+    my $sid = get_sid;
+
 =head2 params
 
 Returns a C<HASHREF> to the HTTP GET or POST parameters.
@@ -136,12 +143,25 @@ The default code is 301.
     redirect base_url . "/foo";
     redirect "http://www.google.com/", 303;
 
+=head2 redirect_internal
+
+Sends a redirect for the application. It is an alias to C<redirect base_url . "...">.
+
+    redirect_internal "/";
+    redirect_internal "/foo", 303;
+
 =head2 set_404
 
 When no route handler could be found, a 404 page is displayed. With C<set_404>, 
 you can specify a custom page. If you want to include the relative URL that was 
 requested in the custom page, include the string "{url}". It will then be 
 replaced.
+
+=head2 set_sid
+
+Sets the Session ID. The Session ID is set as a cookie named C<MTSESSID>.
+
+    set_sid($sid);
 
 =head2 t
 
