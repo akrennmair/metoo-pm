@@ -13,8 +13,8 @@ get "/test-baseurl" => sub {
 	base_url
 };
 
-get "/match/(.*)" => sub {
-	$_[0]
+get "/match(/(.*))?" => sub {
+	$_[1]
 };
 
 get "/match2/([0-9]*)/([a-z]*)" => sub {

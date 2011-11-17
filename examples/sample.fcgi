@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use MeToo::Fast;
 use MeToo;
 
 get "/" => sub {
@@ -22,7 +23,7 @@ EOF
 
 post "/say" => sub {
 	my $yourname = params->{yourname};
-	redirect base_url . "/say/$yourname";
+	redirect_internal "/say/$yourname";
 };
 
 get "/say/(.*)" => sub {

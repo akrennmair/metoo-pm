@@ -194,6 +194,31 @@ value. This is not exactly flexible and feature-complete, but it is good enough
 for simple templates, and definitely fits MeToo.pm's characteristics of being a 
 tiny application framework.
 
+=head1 FASTCGI SUPPORT
+
+Optionally, you can make your MeToo application FastCGI-compatible. This is 
+really simple, just use MeToo::Fast prior to MeToo:
+
+    use MeToo::Fast;
+    use MeToo;
+
+and MeToo will take care of the rest. And this is even backwards-compatible:
+when used as CGI, your script will act as CGI.
+
+Please note that MeToo depends on CGI::Fast (a Perl core module) which in turn 
+depends on the FCGI module, which is not a Perl core module. Hence the use 
+of MeToo::Fast is optional.
+
+To configure your application to be available under a certain prefix, add the
+following to your VirtualHost configuration (example is for Apache 2.2 with
+mod_fastcgi):
+
+    AddHandler fastcgi-script fcgi
+    ScriptAlias /prefix/ /path/to/your/script.fcgi/
+
+Then restart your Apache instance and try out your application. If there
+are any problems, please consult your error log for details.
+
 =head1 BUGS
 
 Please report bugs relevant to MeToo.pm to E<lt>ak@synflood.atE<gt>.

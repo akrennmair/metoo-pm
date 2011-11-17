@@ -9,7 +9,7 @@ What is MeToo.pm?
 =================
 
 It's a nano web application framework, for two reasons:
-1) it's supposed to be super-tiny, below 2kB and 100 SLOCs. This will probably change, 
+1) it's supposed to be super-tiny, below 3kB and 100 SLOCs. This will probably change, 
    but not too much.
 2) it depends on nothing but Perl core modules.
 

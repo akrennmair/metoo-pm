@@ -2,6 +2,7 @@ package MeToo;
 
 use strict;
 use warnings;
+use Module::Loaded;
 
 require Exporter;
 use base qw(Exporter);
@@ -11,7 +12,7 @@ use CGI;
 
 my %routes;
 my ($q, $text_404, $content_type, $session_id, $before_cb, $after_cb);
-use constant SESSID_NAME => "MTSESSID";
+my $SESSID_NAME = "MTSESSID";
 
 BEGIN {
 	$q = CGI->new;
@@ -25,16 +26,15 @@ sub content_type { $content_type = shift; }
 sub base { return $q->url(-absolute=>1); }
 sub base_url { return $q->url; }
 sub set_sid { $session_id = shift; }
-sub get_sid { return $q->cookie(SESSID_NAME); }
-sub _get_cookie { my $cookie; $cookie = SESSID_NAME . "=" . $session_id if $session_id; return $cookie; }
+sub get_sid { return $q->cookie($SESSID_NAME); }
+sub _get_cookie { my $cookie; $cookie = $SESSID_NAME . "=" . $session_id if $session_id; return $cookie; }
 sub before { $before_cb = shift; }
 sub after { $after_cb = shift; }
 
 sub register_route {
 	my ($method, %args) = @_;
 	foreach my $rx (keys %args) {
-		my $base = base;
-		push(@{$routes{$method}->{rx}}, '^' . $base . $rx . '$');
+		push(@{$routes{$method}->{rx}}, '^' . $rx . '$');
 		push(@{$routes{$method}->{sub}}, $args{$rx});
 	}
 }
@@ -73,7 +73,8 @@ sub t {
 	return $data;
 }
 
-END {
+sub _process_request {
+	$q = shift;
 	if ($q->path_info eq "") {
 		redirect(base_url . "/", 301);
 		return;
@@ -83,9 +84,10 @@ END {
 		print $q->header, "Error: unhandled request method.";
 		return;
 	}
-	foreach my $rx (@{$r->{rx}}) {
-		my $routine = shift(@{$r->{sub}});
-		if (my @args = ($ENV{SCRIPT_URL} =~ /$rx/x)) {
+	my $script_url = $q->path_info;
+	for (my $i=0;$i<scalar(@{$r->{rx}});$i++) {
+		my ($rx, $routine) = (@{$r->{rx}}[$i],@{$r->{sub}}[$i]);
+		if (my @args = ($script_url =~ /$rx/x)) {
 			&{$before_cb}() if $before_cb;
 			my $output = &{$routine}(@args) || "";
 			&{$after_cb}() if $after_cb;
@@ -93,7 +95,12 @@ END {
 			return;
 		}
 	}
-	print "Status: 404\r\nContent-type: text/html\r\n\r\n" . t($text_404, url => $ENV{SCRIPT_URL});
+	print "Status: 404\r\nContent-type: text/html\r\n\r\n" . t($text_404, url => $q->script_name . $script_url);
+}
+
+END {
+	return if is_loaded("MeToo::Fast");
+	_process_request($q);
 }
 
 1;
